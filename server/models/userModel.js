@@ -1,48 +1,18 @@
-import { Sequelize } from 'sequelize'
-import sequelize from '../config/database.js'
-import Order from './order.js'
-import Product from './product.js'
+import mongoose from 'mongoose'
 
-//define method takes 2 arguments
-//1st-name of the table
-//2nd-columns inside the table
-const User = sequelize.define('user', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
+const userSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  resetPassword: {
-    type: Sequelize.STRING,
-  },
-  isAdmin: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: true,
-  },
-  // Timestamps: {
-  //   createdAt: Sequelize.DATE,
-  //   updatedAt: Sequelize.DATE,
-  // },
-})
+  { timestamps: true }
+)
 
-// User.hasMany(Order)
-// User.hasMany(Product)
-sequelize
-  .sync({ alter: true })
-  .then(() => console.log('db has been synced'))
-  .catch((err) => console.log(err))
+const User = mongoose.model('User', userSchema)
 
 export default User

@@ -15,45 +15,61 @@ const createProduct = asyncHandler(async (req, res) => {
 //update product
 const updateProduct = asyncHandler(async (req, res) => {
   try {
-    const productToEdit = await Product.findByPk(req.params.id)
-    const changedProduct = await productToEdit.update(req.body)
-
-    res.json(changedProduct)
-  } catch (error) {
-    res.status(500).json(error)
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    )
+    res.status(200).json(updatedProduct)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 
 //delete product
 const deleteProduct = asyncHandler(async (req, res) => {
   try {
-    const productToRemove = await Product.findByPk(req.params.id)
-    await productToRemove.destroy()
-
-    res.send(req.params.id)
-  } catch (error) {
-    res.status(500).json(error)
+    await Product.findByIdAndDelete(req.params.id)
+    res.status(200).json('Product has been deleted...')
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 
 //get product by id
 const getProduct = asyncHandler(async (req, res) => {
   try {
-    const selectedProduct = await Product.findByPk(req.params.id)
-
-    res.json(selectedProduct)
-  } catch (error) {
-    res.status(500).json(error)
+    const product = await Product.findById(req.params.id)
+    res.status(200).json(product)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 
 //get all products
 const getAllProducts = asyncHandler(async (req, res) => {
+  const qNew = req.query.new
+  const qCategory = req.query.category
   try {
-    const products = await Product.findAll({ order: [['title', 'ASC']] })
-    res.json(products)
-  } catch (error) {
-    res.status(500).json(error)
+    let products
+
+    if (qNew) {
+      products = await Product.find().sort({ createdAt: -1 }).limit(1)
+    } else if (qCategory) {
+      products = await Product.find({
+        categories: {
+          $in: [qCategory],
+        },
+      })
+    } else {
+      products = await Product.find()
+    }
+
+    res.status(200).json(products)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 

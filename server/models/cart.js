@@ -1,31 +1,23 @@
-import { Sequelize } from 'sequelize'
-import sequelize from '../config/database.js'
+import mongoose from 'mongoose'
 
-const Cart = sequelize.define('cart', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
+const cartSchema = new mongoose.Schema(
+  {
+    userId: { type: String, required: true },
+    products: [
+      {
+        productId: {
+          type: String,
+        },
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+      },
+    ],
   },
+  { timestamps: true }
+)
 
-  // products: [
-  //   {
-  //     productId: {
-  //       type: Sequelize.INTEGER,
-  //       allowNull: false,
-  //     },
-  //     quantity: {
-  //       type: Sequelize.INTEGER,
-  //       default: 1,
-  //     },
-  //   },
-  // ],
-})
-
-sequelize
-  .sync({ alter: true })
-  .then(() => console.log('db has been synced'))
-  .catch((err) => console.log(err))
+const Cart = mongoose.model('Cart', cartSchema)
 
 export default Cart

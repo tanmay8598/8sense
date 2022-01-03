@@ -15,12 +15,16 @@ const createCart = asyncHandler(async (req, res) => {
 //update
 const updateCart = asyncHandler(async (req, res) => {
   try {
-    const cartToEdit = await Cart.findByPk(req.params.id)
-    const changedCart = await cartToEdit.update(req.body)
-
-    res.json(changedCart)
-  } catch (error) {
-    res.status(500).json(error)
+    const updatedCart = await Cart.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    )
+    res.status(200).json(updatedCart)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 
@@ -39,11 +43,10 @@ const deleteCart = asyncHandler(async (req, res) => {
 //get user cart by user id
 const getCart = asyncHandler(async (req, res) => {
   try {
-    const selectedCart = await Cart.findByPk(req.params.id)
-
-    res.json(selectedCart)
-  } catch (error) {
-    res.status(500).json(error)
+    const cart = await Cart.findOne({ userId: req.params.userId })
+    res.status(200).json(cart)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 
@@ -51,10 +54,10 @@ const getCart = asyncHandler(async (req, res) => {
 
 const getAllCarts = asyncHandler(async (req, res) => {
   try {
-    const carts = await Cart.findAll()
+    const carts = await Cart.find()
     res.status(200).json(carts)
-  } catch (error) {
-    res.status(500).json(error)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 

@@ -11,6 +11,7 @@ import {
 
 router.route('/income').get(orderStats)
 router.route('/').post(createOrder).get(getAllOrders)
-router.route('/:id').post(updateOrder).delete(deleteOrder).get(getOrder)
+router.route('/:id').post(updateOrder).delete(deleteOrder)
+router.route('/find/:id').get(getOrder)
 
 export default router
